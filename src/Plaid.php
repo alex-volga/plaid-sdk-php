@@ -13,6 +13,7 @@ use UnexpectedValueException;
  * @property \TomorrowIdeas\Plaid\Resources\Auth $auth
  * @property \TomorrowIdeas\Plaid\Resources\BankTransfers $bank_transfers
  * @property \TomorrowIdeas\Plaid\Resources\Categories $categories
+ * @property \TomorrowIdeas\Plaid\Resources\Identity $identity
  * @property \TomorrowIdeas\Plaid\Resources\Institutions $institutions
  * @property \TomorrowIdeas\Plaid\Resources\Investments	$investments
  * @property \TomorrowIdeas\Plaid\Resources\Items $items
