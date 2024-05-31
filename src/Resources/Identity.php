@@ -7,7 +7,7 @@ use TomorrowIdeas\Plaid\PlaidRequestException;
 class Identity extends AbstractResource
 {
 	/**
-	 * Get Auth request.
+	 * Get Identity request.
 	 *
 	 * @param string $access_token
 	 * @param array<string,mixed> $options
