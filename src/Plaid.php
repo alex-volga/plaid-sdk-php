@@ -4,7 +4,7 @@ namespace TomorrowIdeas\Plaid;
 
 use Psr\Http\Client\ClientInterface;
 use ReflectionClass;
-use Shuttle\Shuttle;
+use Nimbly\Shuttle;
 use TomorrowIdeas\Plaid\Resources\AbstractResource;
 use UnexpectedValueException;
 
