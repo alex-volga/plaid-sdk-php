@@ -6,7 +6,7 @@ use Capsule\Request;
 use Capsule\Response;
 use Capsule\ResponseStatus;
 use Shuttle\Handler\MockHandler;
-use Shuttle\Shuttle;
+use Nimbly\Shuttle\Shuttle;
 use TomorrowIdeas\Plaid\Plaid;
 use TomorrowIdeas\Plaid\PlaidRequestException;
 use UnexpectedValueException;

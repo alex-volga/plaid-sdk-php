@@ -6,7 +6,7 @@ use Capsule\Request;
 use Capsule\Response;
 use PHPUnit\Framework\TestCase as PHPUnitTestCase;
 use Shuttle\Handler\MockHandler;
-use Shuttle\Shuttle;
+use Nimbly\Shuttle\Shuttle;
 use TomorrowIdeas\Plaid\Plaid;
 
 abstract class TestCase extends PHPUnitTestCase
