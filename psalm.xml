@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <psalm
-    errorLevel="2"
+    errorLevel="3"
     resolveFromConfigFile="true"
     findUnusedCode="false"
     findUnusedBaselineEntry="false"
@@ -14,11 +14,4 @@
             <directory name="vendor" />
         </ignoreFiles>
     </projectFiles>
-    <issueHandlers>
-        <ClassMustBeFinal errorLevel="suppress" />
-        <RiskyTruthyFalsyComparison errorLevel="suppress" />
-        <UnusedClass errorLevel="suppress" />
-        <PossiblyUnusedMethod errorLevel="suppress" />
-        <PossiblyUnusedProperty errorLevel="suppress" />
-    </issueHandlers>
 </psalm>

@@ -102,7 +102,7 @@ class Reports extends AbstractResource
 	/**
 	 * Get an Asset report in PDF format.
 	 *
-	 * @param string $report_token
+	 * @param string $asset_report_token
 	 * @throws PlaidRequestException
 	 * @return ResponseInterface
 	 */
