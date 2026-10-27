@@ -2,7 +2,7 @@
 
 namespace TomorrowIdeas\Plaid\Entities;
 
-use DateTime;
+use DateTimeInterface;
 use InvalidArgumentException;
 
 class PaymentSchedule
@@ -27,20 +27,20 @@ class PaymentSchedule
 	/**
 	 * Start date of scheduled payments.
 	 *
-	 * @var DateTime
+	 * @var DateTimeInterface
 	 */
 	protected $start_date;
 
 	/**
-	 * @param string $interval You can use the class constants PaymentSchedule::WEEKLY and PaymentScheduler::MONTHLY.
+	 * @param string $interval You can use the class constants PaymentSchedule::INTERVAL_WEEKLY and PaymentSchedule::INTERVAL_MONTHLY.
 	 * @param integer $interval_execution_day
-	 * @param DateTime $start_date
+	 * @param DateTimeInterface $start_date
 	 * @throws InvalidArgumentException
 	 */
 	public function __construct(
 		string $interval,
 		int $interval_execution_day,
-		DateTime $start_date)
+		DateTimeInterface $start_date)
 	{
 		if( !\in_array($interval, [self::INTERVAL_MONTHLY, self::INTERVAL_WEEKLY]) ){
 			throw new InvalidArgumentException("Interval must be WEEKLY or MONTHLY.");
@@ -74,9 +74,9 @@ class PaymentSchedule
 	/**
 	 * Get the start date of the scheduled payment.
 	 *
-	 * @return DateTime
+	 * @return DateTimeInterface
 	 */
-	public function getStartDate(): DateTime
+	public function getStartDate(): DateTimeInterface
 	{
 		return $this->start_date;
 	}

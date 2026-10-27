@@ -2,7 +2,7 @@
 
 namespace TomorrowIdeas\Plaid\Resources;
 
-use DateTime;
+use DateTimeInterface;
 use TomorrowIdeas\Plaid\PlaidRequestException;
 
 class Transactions extends AbstractResource
@@ -11,13 +11,13 @@ class Transactions extends AbstractResource
 	 * Get all transactions for a particular Account.
 	 *
 	 * @param string $access_token
-	 * @param DateTime $start_date
-	 * @param DateTime $end_date
+	 * @param DateTimeInterface $start_date
+	 * @param DateTimeInterface $end_date
 	 * @param array<string,mixed> $options
 	 * @throws PlaidRequestException
 	 * @return object
 	 */
-	public function list(string $access_token, DateTime $start_date, DateTime $end_date, array $options = []): object
+	public function list(string $access_token, DateTimeInterface $start_date, DateTimeInterface $end_date, array $options = []): object
 	{
 		$params = [
 			"access_token" => $access_token,

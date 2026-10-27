@@ -73,4 +73,40 @@ class PlaidRequestExceptionTest extends TestCase
 			$plaidRequestException->getResponse()
 		);
 	}
+
+	public function test_getting_error_message_precedence_over_display_message(): void
+	{
+		$response = new Response(
+			400,
+			'{"error_message": "Technical details", "display_message": "User friendly message"}'
+		);
+
+		$plaidRequestException = new PlaidRequestException($response);
+
+		$this->assertEquals("Technical details", $plaidRequestException->getMessage());
+	}
+
+	public function test_getter_helpers_return_plaid_fields(): void
+	{
+		$response = new Response(
+			400,
+			'{
+				"error_type": "ITEM_ERROR",
+				"error_code": "ITEM_LOGIN_REQUIRED",
+				"error_message": "The login details of this item have changed",
+				"display_message": "Please log in again",
+				"request_id": "req_12345",
+				"suggested_action": "RETRY_WITH_NEW_CREDENTIALS"
+			}'
+		);
+
+		$plaidRequestException = new PlaidRequestException($response);
+
+		$this->assertEquals("ITEM_ERROR", $plaidRequestException->getErrorType());
+		$this->assertEquals("ITEM_LOGIN_REQUIRED", $plaidRequestException->getErrorCode());
+		$this->assertEquals("The login details of this item have changed", $plaidRequestException->getErrorMessage());
+		$this->assertEquals("Please log in again", $plaidRequestException->getDisplayMessage());
+		$this->assertEquals("req_12345", $plaidRequestException->getRequestId());
+		$this->assertEquals("RETRY_WITH_NEW_CREDENTIALS", $plaidRequestException->getSuggestedAction());
+	}
 }

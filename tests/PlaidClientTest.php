@@ -98,4 +98,29 @@ class PlaidClientTest extends TestCase
 		$this->expectException(UnexpectedValueException::class);
 		$plaid->resource;
 	}
+
+	public function test_setting_http_client_in_constructor(): void
+	{
+		$httpClient = new Shuttle;
+		$plaid = new Plaid("client_id", "secret", "production", $httpClient);
+
+		$reflection = new \ReflectionClass($plaid);
+		$method = $reflection->getMethod('getHttpClient');
+		$method->setAccessible(true);
+
+		$this->assertSame($httpClient, $method->invoke($plaid));
+	}
+
+	public function test_resource_instances_are_cached(): void
+	{
+		$plaid = new Plaid("client_id", "secret");
+
+		$accounts1 = $plaid->accounts;
+		$accounts2 = $plaid->accounts;
+		$this->assertSame($accounts1, $accounts2);
+
+		$bankTransfers1 = $plaid->bank_transfers;
+		$bankTransfers2 = $plaid->bank_transfers;
+		$this->assertSame($bankTransfers1, $bankTransfers2);
+	}
 }

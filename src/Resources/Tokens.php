@@ -24,7 +24,8 @@ class Tokens extends AbstractResource
 	 * @param string|null $android_package_name
 	 * @param string|null $payment_id
 	 * @param string|null $institution_id
-	 * @param array|null $auth
+	 * @param array<string,mixed>|null $auth
+	 * @param array<string,mixed> $extra Optional additional parameters for link/token/create
 	 * @throws PlaidRequestException
 	 * @return object
 	 */
@@ -42,7 +43,8 @@ class Tokens extends AbstractResource
 		?string $android_package_name = null,
 		?string $payment_id = null,
 		?string $institution_id = null,
-		?array $auth = null): object {
+		?array $auth = null,
+		array $extra = []): object {
 
 		$params = [
 			"client_name" => $client_name,
@@ -88,6 +90,10 @@ class Tokens extends AbstractResource
 
 		if ($auth) {
 			$params["auth"] = $auth;
+		}
+
+		if( $extra ){
+			$params = \array_merge($params, $extra);
 		}
 
 		return $this->sendRequest(

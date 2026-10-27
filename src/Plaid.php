@@ -4,7 +4,6 @@ namespace TomorrowIdeas\Plaid;
 
 use Nimbly\Shuttle\Shuttle;
 use Psr\Http\Client\ClientInterface;
-use ReflectionClass;
 use TomorrowIdeas\Plaid\Resources\AbstractResource;
 use UnexpectedValueException;
 
@@ -15,7 +14,7 @@ use UnexpectedValueException;
  * @property \TomorrowIdeas\Plaid\Resources\Categories $categories
  * @property \TomorrowIdeas\Plaid\Resources\Identity $identity
  * @property \TomorrowIdeas\Plaid\Resources\Institutions $institutions
- * @property \TomorrowIdeas\Plaid\Resources\Investments	$investments
+ * @property \TomorrowIdeas\Plaid\Resources\Investments $investments
  * @property \TomorrowIdeas\Plaid\Resources\Items $items
  * @property \TomorrowIdeas\Plaid\Resources\Liabilities $liabilities
  * @property \TomorrowIdeas\Plaid\Resources\Tokens $tokens
@@ -54,6 +53,8 @@ class Plaid
 	/**
 	 * Plaid API environments and matching hostname.
 	 *
+	 * Note: "development" environment has been sunset by Plaid and is deprecated.
+	 *
 	 * @var array<string,string>
 	 */
 	protected $plaidEnvironments = [
@@ -72,20 +73,22 @@ class Plaid
 	/**
 	 * Resource instance cache.
 	 *
-	 * @var array<AbstractResource>
+	 * @var array<string,AbstractResource>
 	 */
 	protected $resource_cache = [];
 
 	/**
 	 * @param string $client_id
 	 * @param string $client_secret
-	 * @param string $environment Possible values are: production, development, sandbox
+	 * @param string $environment Possible values are: production, development (deprecated), sandbox
+	 * @param ClientInterface|null $httpClient Optional PSR-18 HTTP client instance
 	 * @throws UnexpectedValueException
 	 */
 	public function __construct(
 		string $client_id,
 		string $client_secret,
-		string $environment = "production")
+		string $environment = "production",
+		?ClientInterface $httpClient = null)
 	{
 		if( !\array_key_exists($environment, $this->plaidEnvironments) ){
 			throw new UnexpectedValueException("Invalid environment. Environment must be one of: production, development, or sandbox.");
@@ -94,6 +97,7 @@ class Plaid
 		$this->client_id = $client_id;
 		$this->client_secret = $client_secret;
 		$this->environment = $environment;
+		$this->httpClient = $httpClient;
 	}
 
 	/**
@@ -105,32 +109,30 @@ class Plaid
 	 */
 	public function __get(string $resource): AbstractResource
 	{
-		if( !isset($this->resource_cache[$resource]) ){
+		$normalized_resource = \str_replace([" "], "", \ucwords(\str_replace(["_"], " ", $resource)));
 
-			$resource = \str_replace([" "], "", \ucwords(\str_replace(["_"], " ", $resource)));
+		if( !isset($this->resource_cache[$normalized_resource]) ){
 
-			$resource_class = "\\TomorrowIdeas\\Plaid\\Resources\\" . $resource;
+			$resource_class = "\\TomorrowIdeas\\Plaid\\Resources\\" . $normalized_resource;
 
 			if( !\class_exists($resource_class) ){
 				throw new UnexpectedValueException("Unknown Plaid resource: {$resource}");
 			}
 
-			$reflectionClass = new ReflectionClass($resource_class);
-
 			/**
 			 * @var AbstractResource $resource_instance
 			 */
-			$resource_instance = $reflectionClass->newInstanceArgs([
+			$resource_instance = new $resource_class(
 				$this->getHttpClient(),
 				$this->client_id,
 				$this->client_secret,
 				$this->plaidEnvironments[$this->environment]
-			]);
+			);
 
-			$this->resource_cache[$resource] = $resource_instance;
+			$this->resource_cache[$normalized_resource] = $resource_instance;
 		}
 
-		return $this->resource_cache[$resource];
+		return $this->resource_cache[$normalized_resource];
 	}
 
 	/**

@@ -84,9 +84,7 @@ class User
 				"ssn" => $this->ssn,
 				"date_of_birth" => $this->date_of_birth
 			],
-			function($value): bool {
-				return $value !== null;
-			}
+			static fn($value): bool => $value !== null
 		);
 	}
 }

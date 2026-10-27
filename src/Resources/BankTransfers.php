@@ -2,7 +2,7 @@
 
 namespace TomorrowIdeas\Plaid\Resources;
 
-use DateTime;
+use DateTimeInterface;
 use TomorrowIdeas\Plaid\Entities\AccountHolder;
 use TomorrowIdeas\Plaid\PlaidRequestException;
 
@@ -115,8 +115,8 @@ class BankTransfers extends AbstractResource
 	/**
 	 * Get list of bank transfers.
 	 *
-	 * @param DateTime|null $start_date
-	 * @param DateTime|null $end_date
+	 * @param DateTimeInterface|null $start_date
+	 * @param DateTimeInterface|null $end_date
 	 * @param integer|null $count
 	 * @param integer|null $offset
 	 * @param string|null $direction
@@ -124,8 +124,8 @@ class BankTransfers extends AbstractResource
 	 * @return object
 	 */
 	public function list(
-		?DateTime $start_date = null,
-		?DateTime $end_date = null,
+		?DateTimeInterface $start_date = null,
+		?DateTimeInterface $end_date = null,
 		?int $count = null,
 		?int $offset = null,
 		?string $direction = null,
@@ -167,8 +167,8 @@ class BankTransfers extends AbstractResource
 	/**
 	 * Get list of bank transfer events.
 	 *
-	 * @param DateTime|null $start_date
-	 * @param DateTime|null $end_date
+	 * @param DateTimeInterface|null $start_date
+	 * @param DateTimeInterface|null $end_date
 	 * @param string|null $bank_transfer_id
 	 * @param string|null $account_id
 	 * @param string|null $bank_transfer_type
@@ -180,8 +180,8 @@ class BankTransfers extends AbstractResource
 	 * @return object
 	 */
 	public function listEvents(
-		?DateTime $start_date = null,
-		?DateTime $end_date = null,
+		?DateTimeInterface $start_date = null,
+		?DateTimeInterface $end_date = null,
 		?string $bank_transfer_id = null,
 		?string $account_id = null,
 		?string $bank_transfer_type = null,

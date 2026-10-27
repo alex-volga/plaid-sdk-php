@@ -117,4 +117,17 @@ class TransactionsTest extends TestCase
 		$this->assertEquals(["acct_123", "acct_456"], $response->params->account_ids);
 		$this->assertEquals((object) ["option1" => "value1"], $response->params->options);
 	}
+
+	public function test_get_transactions_with_datetime_immutable(): void
+	{
+		$response = $this->getPlaidClient()->transactions->list(
+			"access_token",
+			new \DateTimeImmutable("2021-01-01 00:00:00"),
+			new \DateTimeImmutable("2021-01-31 23:59:59")
+		);
+
+		$this->assertEquals("POST", $response->method);
+		$this->assertEquals("2021-01-01", $response->params->start_date);
+		$this->assertEquals("2021-01-31", $response->params->end_date);
+	}
 }

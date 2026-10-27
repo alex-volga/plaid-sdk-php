@@ -37,4 +37,15 @@ class PaymentScheduleEntityTest extends TestCase
 		$this->expectException(InvalidArgumentException::class);
 		new PaymentSchedule("YEARLY", 1, new DateTime("2020-01-01"));
 	}
+
+	public function test_accepts_datetime_immutable(): void
+	{
+		$payment_schedule = new PaymentSchedule(
+			PaymentSchedule::INTERVAL_WEEKLY,
+			1,
+			new \DateTimeImmutable("2021-05-10")
+		);
+
+		$this->assertEquals("2021-05-10", $payment_schedule->getStartDate()->format("Y-m-d"));
+	}
 }

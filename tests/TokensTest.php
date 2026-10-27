@@ -242,4 +242,31 @@ class TokensTest extends TestCase
 		$this->assertEquals("secret", $response->params->secret);
 		$this->assertEquals("link_token", $response->params->link_token);
 	}
+
+	public function test_create_token_with_extra_parameters(): void
+	{
+		$response = $this->getPlaidClient()->tokens->create(
+			"client_name",
+			"en",
+			["US"],
+			new User("usr_12345"),
+			[],
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			[
+				"user_token" => "user-token-xyz",
+				"hosted_link" => ["is_ephemeral" => true]
+			]
+		);
+
+		$this->assertEquals("user-token-xyz", $response->params->user_token);
+		$this->assertEquals((object) ["is_ephemeral" => true], $response->params->hosted_link);
+	}
 }

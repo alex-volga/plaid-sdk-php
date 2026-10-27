@@ -24,21 +24,21 @@ abstract class AbstractResource
 	 *
 	 * @var string
 	 */
-	private $client_id;
+	private string $client_id;
 
 	/**
 	 * Plaid client secret.
 	 *
 	 * @var string
 	 */
-	private $client_secret;
+	private string $client_secret;
 
 	/**
 	 * Plaid hostname to use.
 	 *
 	 * @var string
 	 */
-	private $hostname;
+	private string $hostname;
 
 	/**
 	 * @param ClientInterface $httpClient
@@ -86,7 +86,7 @@ abstract class AbstractResource
 	{
 		$response = $this->sendRequestRawResponse($method, $path, $params);
 
-		$payload = \json_decode($response->getBody()->getContents());
+		$payload = \json_decode((string) $response->getBody());
 
 		if( \json_last_error() !== JSON_ERROR_NONE ){
 			throw new UnexpectedValueException("Invalid JSON response returned by Plaid");
@@ -127,10 +127,15 @@ abstract class AbstractResource
 	 */
 	protected function buildRequest(string $method, string $path, array $params = []): RequestInterface
 	{
+		$body = \json_encode((object) $params);
+		if( $body === false ){
+			throw new UnexpectedValueException("Failed to JSON encode request params: " . \json_last_error_msg());
+		}
+
 		return new Request(
 			$method,
 			$this->hostname . \trim($path, "/"),
-			\json_encode((object) $params),
+			$body,
 			[
 				"Plaid-Version" => Plaid::API_VERSION,
 				"Content-Type" => "application/json"

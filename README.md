@@ -1,9 +1,8 @@
 # Plaid SDK
 
-[![Latest Stable Version](https://img.shields.io/packagist/v/tomorrow-ideas/plaid-sdk-php.svg?style=flat-square)](https://packagist.org/packages/tomorrow-ideas/plaid-sdk-php)
-[![Build Status](https://img.shields.io/travis/TomorrowIdeas/plaid-sdk-php.svg?style=flat-square)](https://travis-ci.com/TomorrowIdeas/plaid-sdk-php)
-[![Code Coverage](https://img.shields.io/coveralls/github/TomorrowIdeas/plaid-sdk-php.svg?style=flat-square)](https://coveralls.io/github/TomorrowIdeas/plaid-sdk-php)
-[![License](https://img.shields.io/github/license/TomorrowIdeas/plaid-sdk-php.svg?style=flat-square)](https://packagist.org/packages/tomorrow-ideas/plaid-sdk-php)
+[![Latest Stable Version](https://img.shields.io/packagist/v/alex-volga/plaid-sdk-php.svg?style=flat-square)](https://packagist.org/packages/alex-volga/plaid-sdk-php)
+[![GitHub Actions Tests](https://img.shields.io/github/actions/workflow/status/alex-volga/plaid-sdk-php/tests.yml?branch=master&style=flat-square)](https://github.com/alex-volga/plaid-sdk-php/actions)
+[![License](https://img.shields.io/github/license/alex-volga/plaid-sdk-php.svg?style=flat-square)](https://packagist.org/packages/alex-volga/plaid-sdk-php)
 
 Plaid PHP SDK supporting:
 * Link tokens
@@ -29,33 +28,37 @@ For full description of request and response payloads and properties, please see
 
 ## Requirements
 
-* PHP 7.3+ | PHP 8.0+
-* ext-curl
+* PHP 8.0+ (tested through PHP 8.4)
 * ext-json
 
 ## Installation
 
 ```bash
-composer require tomorrow-ideas/plaid-sdk-php
+composer require alex-volga/plaid-sdk-php
 ```
 
 ## Configuration
 
-Instantiate the Plaid client class with your credentials.
+Instantiate the Plaid client class with your credentials. You may optionally pass a custom PSR-18 `ClientInterface` implementation directly to the constructor (or configure it later with `setHttpClient`):
 
 ```php
-$client = new \TomorrowIdeas\Plaid\Plaid("your-client-id", "your-secret", "environment");
+$client = new \TomorrowIdeas\Plaid\Plaid(
+    "your-client-id",
+    "your-secret",
+    "production",
+    $optionalPsr18HttpClient
+);
 ```
 
 ### Environments
 
-The Plaid client by default uses the **production** Plaid API hostname for all API calls. You can change the environment by using the `setEnvironment` method.
+The Plaid client by default uses the **production** Plaid API hostname for all API calls.
 
 Possible environments:
 
-* production
-* development
-* sandbox
+* `production` (`https://production.plaid.com/`)
+* `sandbox` (`https://sandbox.plaid.com/`)
+* `development` (`https://development.plaid.com/`, *deprecated: sunset by Plaid*)
 
 ### Options
 
@@ -148,16 +151,16 @@ create(
 * `cancel(string $bank_transfer_id): object`
 * `get(string $bank_transfer_id): object`
 * `list(
-		?DateTime $start_date = null,
-		?DateTime $end_date = null,
+		?\DateTimeInterface $start_date = null,
+		?\DateTimeInterface $end_date = null,
 		?int $count = null,
 		?int $offset = null,
 		?string $direction = null,
 		?string $origination_account_id = null): object
 `
 * `getEventList(
-		?DateTime $start_date = null,
-		?DateTime $end_date = null,
+		?\DateTimeInterface $start_date = null,
+		?\DateTimeInterface $end_date = null,
 		?string $bank_transfer_id = null,
 		?string $account_id = null,
 		?string $bank_transfer_type = null,
@@ -190,6 +193,28 @@ Example:
 $categories = $plaid->categories->list();
 ```
 
+### Identity
+
+Resource: `identity`
+
+Reference: https://plaid.com/docs/api/products/identity/
+
+Methods:
+
+* `get(string $access_token, array $options = []): object`
+* `match(string $access_token, array $user, array $options = []): object`
+
+Example:
+```php
+$identity = $plaid->identity->get($access_token);
+
+$matchResult = $plaid->identity->match($access_token, [
+	"legal_name" => "Jane Doe",
+	"phone_number" => "+1 415 555 0123",
+	"email_address" => "jane.doe@example.com"
+]);
+```
+
 ### Institutions
 
 Resource: `institutions`
@@ -216,7 +241,7 @@ Reference: https://plaid.com/docs/api/products/#investments
 Methods:
 
 * `listHoldings(string $access_token, array $options = []): object`
-* `listTransactions(string $access_token, DateTime $start_date, DateTime $end_date, array $options = []): object`
+* `listTransactions(string $access_token, \DateTimeInterface $start_date, \DateTimeInterface $end_date, array $options = []): object`
 
 Example:
 ```php
@@ -231,7 +256,8 @@ Reference: https://plaid.com/docs/api/tokens/
 Methods:
 
 ```php
-create(string $client_name,
+create(
+	string $client_name,
 	string $language,
 	array $country_codes,
 	User $user,
@@ -240,16 +266,37 @@ create(string $client_name,
 	?string $link_customization_name = null,
 	?AccountFilters $account_filters = null,
 	?string $access_token = null,
-	?string $redirect_url = null,
+	?string $redirect_uri = null,
 	?string $android_package_name = null,
-	?string $payment_id = null): object
+	?string $payment_id = null,
+	?string $institution_id = null,
+	?array $auth = null,
+	array $extra = []): object
 ```
 
-`get(string $link_token): object`
+* `get(string $link_token): object`
 
 Example:
 ```php
-$token = $plaid->tokens->create($client_name, $language, ["US","CA"], $user_id);
+$token = $plaid->tokens->create(
+	$client_name,
+	$language,
+	["US", "CA"],
+	$user,
+	["transactions"],
+	null,
+	null,
+	null,
+	null,
+	null,
+	null,
+	null,
+	null,
+	null,
+	[
+		"user_token" => "user-token-xyz"
+	]
+);
 ```
 
 ### Liabilities
@@ -310,13 +357,14 @@ Reference: https://plaid.com/docs/api/products/#transactions
 
 Methods:
 
-* `list(string $access_token, DateTime $start_date, DateTime $end_date, array $options = []): object`
+* `list(string $access_token, \DateTimeInterface $start_date, \DateTimeInterface $end_date, array $options = []): object`
 * `refresh(string $access_token): object`
 * `sync(string $access_token, ?string $cursor = null, ?int $count = null, array $options = []): object`
 * `recurring(string $access_token, array $account_ids, array $options = []): object`
 
 Example:
 ```php
+// Accepts both DateTime and DateTimeImmutable
 $transactions = $plaid->transactions->list($access_token, $start_date, $end_date);
 ```
 
@@ -409,7 +457,7 @@ $token_user = new User(
 	?string $email_address = null,
 	?string $ssn = null,
 	?string $date_of_birth = null
-)
+);
 ```
 
 ### RecipientAddress
@@ -424,19 +472,41 @@ $address = new TomorrowIdeas\Plaid\Entities\RecipientAddress("123 Elm St.", "Apt
 
 ### PaymentSchedule
 
-Example:
-
-The `TomorrowIdeas\Plaid\Entities\PaymnentSchedule` entity is used when creating a new payment that will be a recurring charge.
+The `TomorrowIdeas\Plaid\Entities\PaymentSchedule` entity is used when creating a new payment that will be a recurring charge.
 See `createPayment` method for more information.
 
 ```php
-$payment_schedule = new TomorrowIdeas\Plaid\Entities\PaymnentSchedule(
+// Accepts both DateTime and DateTimeImmutable
+$payment_schedule = new TomorrowIdeas\Plaid\Entities\PaymentSchedule(
     PaymentSchedule::INTERVAL_MONTHLY,
     15,
-    new DateTime("2020-10-01")
+    new \DateTimeImmutable("2020-10-01")
 );
 ```
 
 ## Errors
 
-All unsuccessfull (non 2xx) responses will throw a `PlaidRequestException`. The full response object is available via the `getResponse()` method.
+All unsuccessful (non 2xx) responses throw a `PlaidRequestException`.
+
+You can access the parsed Plaid response payload, as well as typed convenience helper methods:
+
+```php
+try {
+    $item = $plaid->items->get("invalid_access_token");
+} catch (\TomorrowIdeas\Plaid\PlaidRequestException $e) {
+    // Standard Exception methods
+    $httpCode = $e->getCode(); // e.g. 400
+    $message  = $e->getMessage(); // Plaid error_message or display_message
+
+    // Typed Plaid error fields
+    $errorCode       = $e->getErrorCode();       // e.g. "ITEM_LOGIN_REQUIRED"
+    $errorType       = $e->getErrorType();       // e.g. "ITEM_ERROR"
+    $errorMessage    = $e->getErrorMessage();    // Technical message
+    $displayMessage  = $e->getDisplayMessage();  // User-facing message (if any)
+    $requestId       = $e->getRequestId();       // Plaid request tracking ID
+    $suggestedAction = $e->getSuggestedAction(); // Plaid suggested action (if any)
+
+    // Raw stdClass Plaid response payload
+    $rawResponse = $e->getResponse();
+}
+```
