@@ -17,28 +17,28 @@ abstract class AbstractResource
 	 *
 	 * @var ClientInterface
 	 */
-	protected $httpClient;
+	protected readonly ClientInterface $httpClient;
 
 	/**
 	 * Plaid client Id.
 	 *
 	 * @var string
 	 */
-	private string $client_id;
+	private readonly string $client_id;
 
 	/**
 	 * Plaid client secret.
 	 *
 	 * @var string
 	 */
-	private string $client_secret;
+	private readonly string $client_secret;
 
 	/**
 	 * Plaid hostname to use.
 	 *
 	 * @var string
 	 */
-	private string $hostname;
+	private readonly string $hostname;
 
 	/**
 	 * @param ClientInterface $httpClient

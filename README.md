@@ -28,7 +28,7 @@ For full description of request and response payloads and properties, please see
 
 ## Requirements
 
-* PHP 8.0+ (tested through PHP 8.4)
+* PHP 8.1+ (tested through PHP 8.5)
 * ext-json
 
 ## Installation
@@ -39,13 +39,16 @@ composer require alex-volga/plaid-sdk-php
 
 ## Configuration
 
-Instantiate the Plaid client class with your credentials. You may optionally pass a custom PSR-18 `ClientInterface` implementation directly to the constructor (or configure it later with `setHttpClient`):
+Instantiate the Plaid client class with your credentials. You can pass environment as a string or using the `Environment` enum, and optionally pass a custom PSR-18 `ClientInterface` implementation:
 
 ```php
-$client = new \TomorrowIdeas\Plaid\Plaid(
+use TomorrowIdeas\Plaid\Plaid;
+use TomorrowIdeas\Plaid\Environment;
+
+$client = new Plaid(
     "your-client-id",
     "your-secret",
-    "production",
+    Environment::Production, // or "production"
     $optionalPsr18HttpClient
 );
 ```
@@ -54,11 +57,11 @@ $client = new \TomorrowIdeas\Plaid\Plaid(
 
 The Plaid client by default uses the **production** Plaid API hostname for all API calls.
 
-Possible environments:
+Possible environments (using `TomorrowIdeas\Plaid\Environment` enum or string):
 
-* `production` (`https://production.plaid.com/`)
-* `sandbox` (`https://sandbox.plaid.com/`)
-* `development` (`https://development.plaid.com/`, *deprecated: sunset by Plaid*)
+* `Environment::Production` / `"production"` (`https://production.plaid.com/`)
+* `Environment::Sandbox` / `"sandbox"` (`https://sandbox.plaid.com/`)
+* `Environment::Development` / `"development"` (`https://development.plaid.com/`, *deprecated: sunset by Plaid*)
 
 ### Options
 

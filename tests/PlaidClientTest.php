@@ -59,6 +59,17 @@ class PlaidClientTest extends TestCase
 		$this->assertEquals("sandbox.plaid.com", $response->host);
 	}
 
+	public function test_environment_enum_support(): void
+	{
+		$plaid = new Plaid("client_id", "secret", \TomorrowIdeas\Plaid\Environment::Sandbox);
+
+		$reflectionClass = new ReflectionClass($plaid);
+		$reflectionProperty = $reflectionClass->getProperty("environment");
+		$reflectionProperty->setAccessible(true);
+
+		$this->assertEquals("sandbox", $reflectionProperty->getValue($plaid));
+	}
+
 	public function test_default_plaid_version(): void
 	{
 		$this->assertEquals("2020-09-14", Plaid::API_VERSION);

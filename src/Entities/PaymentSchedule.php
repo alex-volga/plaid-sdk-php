@@ -15,38 +15,40 @@ class PaymentSchedule
 	 *
 	 * @var string
 	 */
-	protected $interval;
+	public readonly string $interval;
 
 	/**
 	 * Payment schedule execution day.
 	 *
 	 * @var int
 	 */
-	protected $interval_execution_day;
+	public readonly int $interval_execution_day;
 
 	/**
 	 * Start date of scheduled payments.
 	 *
 	 * @var DateTimeInterface
 	 */
-	protected $start_date;
+	public readonly DateTimeInterface $start_date;
 
 	/**
-	 * @param string $interval You can use the class constants PaymentSchedule::INTERVAL_WEEKLY and PaymentSchedule::INTERVAL_MONTHLY.
+	 * @param PaymentInterval|string $interval You can use PaymentInterval enum or constants PaymentSchedule::INTERVAL_WEEKLY and PaymentSchedule::INTERVAL_MONTHLY.
 	 * @param integer $interval_execution_day
 	 * @param DateTimeInterface $start_date
 	 * @throws InvalidArgumentException
 	 */
 	public function __construct(
-		string $interval,
+		PaymentInterval|string $interval,
 		int $interval_execution_day,
 		DateTimeInterface $start_date)
 	{
-		if( !\in_array($interval, [self::INTERVAL_MONTHLY, self::INTERVAL_WEEKLY]) ){
+		$intervalValue = $interval instanceof PaymentInterval ? $interval->value : $interval;
+
+		if( !\in_array($intervalValue, [self::INTERVAL_MONTHLY, self::INTERVAL_WEEKLY], true) ){
 			throw new InvalidArgumentException("Interval must be WEEKLY or MONTHLY.");
 		}
 
-		$this->interval = $interval;
+		$this->interval = $intervalValue;
 		$this->interval_execution_day = $interval_execution_day;
 		$this->start_date = $start_date;
 	}

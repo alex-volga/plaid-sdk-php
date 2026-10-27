@@ -9,35 +9,35 @@ class RecipientAddress
 	 *
 	 * @var string
 	 */
-	protected $street;
+	public readonly string $street;
 
 	/**
 	 * Additional street address.
 	 *
 	 * @var string|null
 	 */
-	protected $street2;
+	public readonly ?string $street2;
 
 	/**
 	 * City
 	 *
 	 * @var string
 	 */
-	protected $city;
+	public readonly string $city;
 
 	/**
 	 * Postal code
 	 *
 	 * @var string
 	 */
-	protected $postal_code;
+	public readonly string $postal_code;
 
 	/**
 	 * Country (2 character ISO)
 	 *
 	 * @var string
 	 */
-	protected $country;
+	public readonly string $country;
 
 	/**
 	 * Address constructor.

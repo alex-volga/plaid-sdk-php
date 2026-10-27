@@ -9,49 +9,49 @@ class User
 	 *
 	 * @var string
 	 */
-	protected $id;
+	public readonly string $id;
 
 	/**
 	 * User legal full name
 	 *
 	 * @var string|null
 	 */
-	protected $name;
+	public readonly ?string $name;
 
 	/**
 	 * User phone number
 	 *
 	 * @var string|null
 	 */
-	protected $phone_number;
+	public readonly ?string $phone_number;
 
 	/**
 	 * User phone number verified timestamp.
 	 *
 	 * @var string|null
 	 */
-	protected $phone_number_verified_time;
+	public readonly ?string $phone_number_verified_time;
 
 	/**
 	 * User email address
 	 *
 	 * @var string|null
 	 */
-	protected $email_address;
+	public readonly ?string $email_address;
 
 	/**
 	 * User social security number
 	 *
 	 * @var string|null
 	 */
-	protected $ssn;
+	public readonly ?string $ssn;
 
 	/**
 	 * User date of birth
 	 *
 	 * @var string|null
 	 */
-	protected $date_of_birth;
+	public readonly ?string $date_of_birth;
 
 	public function __construct(
 		string $id,

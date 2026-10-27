@@ -48,4 +48,16 @@ class PaymentScheduleEntityTest extends TestCase
 
 		$this->assertEquals("2021-05-10", $payment_schedule->getStartDate()->format("Y-m-d"));
 	}
+
+	public function test_accepts_payment_interval_enum(): void
+	{
+		$payment_schedule = new PaymentSchedule(
+			\TomorrowIdeas\Plaid\Entities\PaymentInterval::Monthly,
+			15,
+			new \DateTimeImmutable("2022-01-01")
+		);
+
+		$this->assertEquals("MONTHLY", $payment_schedule->getInterval());
+		$this->assertEquals(15, $payment_schedule->getIntervalExecutionDay());
+	}
 }

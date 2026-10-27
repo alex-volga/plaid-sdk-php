@@ -27,28 +27,28 @@ use UnexpectedValueException;
  */
 class Plaid
 {
-	const API_VERSION = "2020-09-14";
+	final public const API_VERSION = "2020-09-14";
 
 	/**
 	 * Plaid client Id.
 	 *
 	 * @var string
 	 */
-	protected $client_id;
+	protected string $client_id;
 
 	/**
 	 * Plaid client secret.
 	 *
 	 * @var string
 	 */
-	protected $client_secret;
+	protected string $client_secret;
 
 	/**
 	 * Plaid API host environment.
 	 *
 	 * @var string
 	 */
-	protected $environment = "production";
+	protected string $environment = "production";
 
 	/**
 	 * Plaid API environments and matching hostname.
@@ -57,7 +57,7 @@ class Plaid
 	 *
 	 * @var array<string,string>
 	 */
-	protected $plaidEnvironments = [
+	protected array $plaidEnvironments = [
 		"production" => "https://production.plaid.com/",
 		"development" => "https://development.plaid.com/",
 		"sandbox" => "https://sandbox.plaid.com/",
@@ -68,35 +68,37 @@ class Plaid
 	 *
 	 * @var ClientInterface|null
 	 */
-	protected $httpClient;
+	protected ?ClientInterface $httpClient = null;
 
 	/**
 	 * Resource instance cache.
 	 *
 	 * @var array<string,AbstractResource>
 	 */
-	protected $resource_cache = [];
+	protected array $resource_cache = [];
 
 	/**
 	 * @param string $client_id
 	 * @param string $client_secret
-	 * @param string $environment Possible values are: production, development (deprecated), sandbox
+	 * @param Environment|string $environment Possible values are: production, development (deprecated), sandbox, or Environment enum
 	 * @param ClientInterface|null $httpClient Optional PSR-18 HTTP client instance
 	 * @throws UnexpectedValueException
 	 */
 	public function __construct(
 		string $client_id,
 		string $client_secret,
-		string $environment = "production",
+		Environment|string $environment = "production",
 		?ClientInterface $httpClient = null)
 	{
-		if( !\array_key_exists($environment, $this->plaidEnvironments) ){
+		$envName = $environment instanceof Environment ? $environment->value : $environment;
+
+		if( !\array_key_exists($envName, $this->plaidEnvironments) ){
 			throw new UnexpectedValueException("Invalid environment. Environment must be one of: production, development, or sandbox.");
 		}
 
 		$this->client_id = $client_id;
 		$this->client_secret = $client_secret;
-		$this->environment = $environment;
+		$this->environment = $envName;
 		$this->httpClient = $httpClient;
 	}
 

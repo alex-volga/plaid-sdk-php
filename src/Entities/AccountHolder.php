@@ -9,18 +9,18 @@ class AccountHolder
 	 *
 	 * @var string
 	 */
-	protected $legal_name;
+	public readonly string $legal_name;
 
 	/**
 	 * Email address of account holder.
 	 *
 	 * @var string|null
 	 */
-	protected $email;
+	public readonly ?string $email;
 
 	public function __construct(
 		string $legal_name,
-		string $email = null
+		?string $email = null
 	)
 	{
 		$this->legal_name = $legal_name;

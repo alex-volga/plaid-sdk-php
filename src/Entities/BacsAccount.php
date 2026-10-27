@@ -9,14 +9,14 @@ class BacsAccount
 	 *
 	 * @var string
 	 */
-	protected $account;
+	public readonly string $account;
 
 	/**
 	 * Sort code.
 	 *
 	 * @var string
 	 */
-	protected $sort_code;
+	public readonly string $sort_code;
 
 	public function __construct(
 		string $account,
